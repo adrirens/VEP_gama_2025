@@ -1,0 +1,491 @@
+{
+  "seed": 0.20938834,
+  "experiment_id": "path_manual_gui0",
+  "building": [
+    {
+      "gaml_type": "pair<string, list<point>>",
+      "key": "building0",
+      "value": [
+        {
+          "gaml_type": "point",
+          "x": 5.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        {
+          "gaml_type": "point",
+          "x": 5.0,
+          "y": 15.0,
+          "z": 0.0
+        },
+        {
+          "gaml_type": "point",
+          "x": 20.0,
+          "y": 15.0,
+          "z": 0.0
+        },
+        {
+          "gaml_type": "point",
+          "x": 20.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        {
+          "gaml_type": "point",
+          "x": 5.0,
+          "y": 0.0,
+          "z": 0.0
+        }
+      ]
+    },
+    {
+      "gaml_type": "pair<string, list<point>>",
+      "key": "building1",
+      "value": [
+        {
+          "gaml_type": "point",
+          "x": 30.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        {
+          "gaml_type": "point",
+          "x": 30.0,
+          "y": 15.0,
+          "z": 0.0
+        },
+        {
+          "gaml_type": "point",
+          "x": 45.0,
+          "y": 15.0,
+          "z": 0.0
+        },
+        {
+          "gaml_type": "point",
+          "x": 45.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        {
+          "gaml_type": "point",
+          "x": 30.0,
+          "y": 0.0,
+          "z": 0.0
+        }
+      ]
+    },
+    {
+      "gaml_type": "pair<string, list<point>>",
+      "key": "building2",
+      "value": [
+        {
+          "gaml_type": "point",
+          "x": 30.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        {
+          "gaml_type": "point",
+          "x": 20.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        {
+          "gaml_type": "point",
+          "x": 20.0,
+          "y": 11.0,
+          "z": 0.0
+        },
+        {
+          "gaml_type": "point",
+          "x": 30.0,
+          "y": 11.0,
+          "z": 0.0
+        },
+        {
+          "gaml_type": "point",
+          "x": 30.0,
+          "y": 0.0,
+          "z": 0.0
+        }
+      ]
+    },
+    {
+      "gaml_type": "pair<string, list<point>>",
+      "key": "building3",
+      "value": [
+        {
+          "gaml_type": "point",
+          "x": 5.0,
+          "y": 35.0,
+          "z": 0.0
+        },
+        {
+          "gaml_type": "point",
+          "x": 5.0,
+          "y": 50.0,
+          "z": 0.0
+        },
+        {
+          "gaml_type": "point",
+          "x": 20.0,
+          "y": 50.0,
+          "z": 0.0
+        },
+        {
+          "gaml_type": "point",
+          "x": 20.0,
+          "y": 35.0,
+          "z": 0.0
+        },
+        {
+          "gaml_type": "point",
+          "x": 5.0,
+          "y": 35.0,
+          "z": 0.0
+        }
+      ]
+    },
+    {
+      "gaml_type": "pair<string, list<point>>",
+      "key": "building4",
+      "value": [
+        {
+          "gaml_type": "point",
+          "x": 30.0,
+          "y": 35.0,
+          "z": 0.0
+        },
+        {
+          "gaml_type": "point",
+          "x": 30.0,
+          "y": 50.0,
+          "z": 0.0
+        },
+        {
+          "gaml_type": "point",
+          "x": 45.0,
+          "y": 50.0,
+          "z": 0.0
+        },
+        {
+          "gaml_type": "point",
+          "x": 45.0,
+          "y": 35.0,
+          "z": 0.0
+        },
+        {
+          "gaml_type": "point",
+          "x": 30.0,
+          "y": 35.0,
+          "z": 0.0
+        }
+      ]
+    },
+    {
+      "gaml_type": "pair<string, list<point>>",
+      "key": "building5",
+      "value": [
+        {
+          "gaml_type": "point",
+          "x": 30.0,
+          "y": 39.0,
+          "z": 0.0
+        },
+        {
+          "gaml_type": "point",
+          "x": 20.0,
+          "y": 39.0,
+          "z": 0.0
+        },
+        {
+          "gaml_type": "point",
+          "x": 20.0,
+          "y": 50.0,
+          "z": 0.0
+        },
+        {
+          "gaml_type": "point",
+          "x": 30.0,
+          "y": 50.0,
+          "z": 0.0
+        },
+        {
+          "gaml_type": "point",
+          "x": 30.0,
+          "y": 39.0,
+          "z": 0.0
+        }
+      ]
+    },
+    {
+      "gaml_type": "pair<string, list<point>>",
+      "key": "building6",
+      "value": [
+        {
+          "gaml_type": "point",
+          "x": 5.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        {
+          "gaml_type": "point",
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        {
+          "gaml_type": "point",
+          "x": 0.0,
+          "y": 11.0,
+          "z": 0.0
+        },
+        {
+          "gaml_type": "point",
+          "x": 5.0,
+          "y": 11.0,
+          "z": 0.0
+        },
+        {
+          "gaml_type": "point",
+          "x": 5.0,
+          "y": 0.0,
+          "z": 0.0
+        }
+      ]
+    },
+    {
+      "gaml_type": "pair<string, list<point>>",
+      "key": "building7",
+      "value": [
+        {
+          "gaml_type": "point",
+          "x": 50.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        {
+          "gaml_type": "point",
+          "x": 45.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        {
+          "gaml_type": "point",
+          "x": 45.0,
+          "y": 11.0,
+          "z": 0.0
+        },
+        {
+          "gaml_type": "point",
+          "x": 50.0,
+          "y": 11.0,
+          "z": 0.0
+        },
+        {
+          "gaml_type": "point",
+          "x": 50.0,
+          "y": 0.0,
+          "z": 0.0
+        }
+      ]
+    },
+    {
+      "gaml_type": "pair<string, list<point>>",
+      "key": "building8",
+      "value": [
+        {
+          "gaml_type": "point",
+          "x": 5.0,
+          "y": 39.0,
+          "z": 0.0
+        },
+        {
+          "gaml_type": "point",
+          "x": 0.0,
+          "y": 39.0,
+          "z": 0.0
+        },
+        {
+          "gaml_type": "point",
+          "x": 0.0,
+          "y": 50.0,
+          "z": 0.0
+        },
+        {
+          "gaml_type": "point",
+          "x": 5.0,
+          "y": 50.0,
+          "z": 0.0
+        },
+        {
+          "gaml_type": "point",
+          "x": 5.0,
+          "y": 39.0,
+          "z": 0.0
+        }
+      ]
+    },
+    {
+      "gaml_type": "pair<string, list<point>>",
+      "key": "building9",
+      "value": [
+        {
+          "gaml_type": "point",
+          "x": 50.0,
+          "y": 39.0,
+          "z": 0.0
+        },
+        {
+          "gaml_type": "point",
+          "x": 45.0,
+          "y": 39.0,
+          "z": 0.0
+        },
+        {
+          "gaml_type": "point",
+          "x": 45.0,
+          "y": 50.0,
+          "z": 0.0
+        },
+        {
+          "gaml_type": "point",
+          "x": 50.0,
+          "y": 50.0,
+          "z": 0.0
+        },
+        {
+          "gaml_type": "point",
+          "x": 50.0,
+          "y": 39.0,
+          "z": 0.0
+        }
+      ]
+    }
+  ],
+  "is_torus": true,
+  "environment_size": 50.0,
+  "step": 1.0,
+  "P_state_to_events_to_emotions": {
+    "flock": {
+      "spatial_incursion": [
+        "fear"
+      ],
+      "outnumbered": [
+        "fear"
+      ],
+      "feeling_target_for_arrest": [
+        "fear_confirmed",
+        "anger"
+      ],
+      "being_arrested": [
+        "fear_confirmed",
+        "anger"
+      ],
+      "surrounded": [
+        "fear"
+      ]
+    },
+    "violent": {
+      "spatial_incursion": [
+        "fear"
+      ],
+      "outnumbered": [
+        "fear"
+      ],
+      "feeling_target_for_arrest": [
+        "fear"
+      ],
+      "being_arrested": [
+        "fear_confirmed"
+      ],
+      "surrounded": [
+        "fear"
+      ]
+    },
+    "retreat": {
+      "spatial_incursion": [
+        "fear"
+      ],
+      "outnumbered": [
+        "fear"
+      ],
+      "feeling_target_for_arrest": [
+        "fear_confirmed",
+        "anger"
+      ],
+      "being_arrested": [
+        "fear_confirmed",
+        "anger"
+      ],
+      "surrounded": [
+        "fear"
+      ]
+    }
+  },
+  "P_m_min": 80.0,
+  "P_m_max": 80.0,
+  "P_v0_mean": 1.3,
+  "P_v0_std": 0.0,
+  "P_teta0": 90.0,
+  "P_disc_factor": 10.0,
+  "P_tau": 0.5,
+  "P_dmax": 7.0,
+  "P_k": 1000.0,
+  "P_arrest_dist": 0.5,
+  "P_dmax_my_position_team": 20.0,
+  "P_police_resistance_init": 1000.0,
+  "P_team_is_mobile": false,
+  "P_team_movement_amplitude": 20.0,
+  "P_team_speed": 1.3,
+  "P_team_take_regular_shape": false,
+  "P_team_regular_shape_radius": 2.0,
+  "P_team_take_line_formation_shape": true,
+  "P_team_n_members_to_keep": 0,
+  "P_team_n_members_per_arrest_team": 3,
+  "P_half_dmax_lateral": 10.0,
+  "P_half_dmax_frontal": 2.0,
+  "P_flocking_charisma_min": 0.0,
+  "P_flocking_charisma_max": 1.0,
+  "P_flocking_dist_imitation": 7.0,
+  "P_flocking_dist_attraction": 7.0,
+  "P_flocking_dist_repulsion": 0.5,
+  "P_rioter_arrest_resistance_init": 15,
+  "P_rioter_resistance_init": 10.0,
+  "P_rioter_energy_init": 300.0,
+  "P_rioter_energy_minimum": 0.0,
+  "P_rioter_energy_attack_consumption": 1.0,
+  "P_rioter_energy_retreat_consumption": 1.0,
+  "P_rioter_grievance_min": 0.0,
+  "P_rioter_grievance_max": 1.0,
+  "P_rioter_risk_aversion_min": 0.0,
+  "P_rioter_risk_aversion_max": 1.0,
+  "P_rioter_attack_threshold_min": 1.0,
+  "P_rioter_attack_threshold_max": 1.0,
+  "P_rioter_retreat_threshold_min": 0.7,
+  "P_rioter_retreat_threshold_max": 0.7,
+  "P_rioter_k_liking": 1.0,
+  "P_rioter_lifetime_triedRetreat": 300,
+  "P_rioter_dist_spatial_incursion": 1.2,
+  "P_rioter_ratio_cop_over_rioter_outnumbered": 3.0,
+  "P_spatial_incursion_to_detect": true,
+  "P_outnumbered_to_detect": true,
+  "P_feeling_target_for_arrest_to_detect": true,
+  "P_being_arrested_to_detect": true,
+  "P_unjust_arrest_around_to_detect": false,
+  "P_surround_to_detect": false,
+  "P_any_police_officer_around_to_detect": false,
+  "P_order_to_scatter_signal_to_detect": false,
+  "P_emotion_decay": 0.25,
+  "P_emotional_contagion_activated": true,
+  "P_emotional_contagion_fear_confirmed_when_violent": false,
+  "P_max_liking_influence_to_violence": 0.5,
+  "P_threshold_ratio_violence_to_neutral": 0.5,
+  "P_emotional_contagion_threshold": 0.25,
+  "P_use_damageable_items": true,
+  "P_duration_before_respawn_item": 300.0,
+  "P resistance init items": 180.0,
+  "P_nb_rioters": 200,
+  "P_path_n_subroads": 2,
+  "P_path_n_cops_per_subroad": 12
+}

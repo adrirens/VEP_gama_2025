@@ -1,0 +1,34 @@
+This document summarizes the key parameters modified in each configuration for the simulations in the same folder.
+A number is given before which is the ID of the simulation (used in the file name, experiment name and result folder). 
+
+		
+0
+["Nb rioters"::200,"Nb cops ortho"::1,"Nb cops transverse"::5,"Emotional contagion activated"::true,"Max police social liking decreace on inhibition"::0.5,"Use damageable items"::true],
+
+1
+["Nb rioters"::200,"Nb cops ortho"::1,"Nb cops transverse"::10,"Emotional contagion activated"::true,"Max police social liking decreace on inhibition"::0.5,"Use damageable items"::true,"Min attack threshold"::1,"Max attack threshold"::1],
+
+2
+["Nb rioters"::200,"Nb cops ortho"::1,"Nb cops transverse"::15,"Emotional contagion activated"::true,"Max police social liking decreace on inhibition"::0.5,"Use damageable items"::true,"Min attack threshold"::1,"Max attack threshold"::1],
+
+3
+["Nb rioters"::200,"Nb cops ortho"::1,"Nb cops transverse"::20,"Emotional contagion activated"::true,"Max police social liking decreace on inhibition"::0.5,"Use damageable items"::true,"Min attack threshold"::1,"Max attack threshold"::1],
+
+4
+["Nb rioters"::200,"Nb cops ortho"::1,"Nb cops transverse"::24,"Emotional contagion activated"::true,"Max police social liking decreace on inhibition"::0.5,"Use damageable items"::true,"Min attack threshold"::1,"Max attack threshold"::1],
+
+5
+["Nb rioters"::200,"Nb cops ortho"::1,"Nb cops transverse"::28,"Emotional contagion activated"::true,"Max police social liking decreace on inhibition"::0.5,"Use damageable items"::true,"Min attack threshold"::1,"Max attack threshold"::1],
+
+100
+["Nb rioters"::200,"Nb cops ortho"::1,"Nb cops transverse"::5,"Emotional contagion activated"::false,"Max police social liking decreace on inhibition"::0.5,"P_use_damageable_items"::true],
+
+103
+["Nb rioters"::200,"Nb cops ortho"::1,"Nb cops transverse"::20,"Emotional contagion activated"::false,"Max police social liking decreace on inhibition"::0.5,"P_use_damageable_items"::true],
+
+010
+["Nb rioters"::200,"Nb cops ortho"::1,"Nb cops transverse"::5,"Emotional contagion activated"::true,"Max police social liking decreace on inhibition"::0.5,"P_use_damageable_items"::false],
+
+013
+["Nb rioters"::200,"Nb cops ortho"::1,"Nb cops transverse"::20,"Emotional contagion activated"::true,"Max police social liking decreace on inhibition"::0.5,"P_use_damageable_items"::false],
+
