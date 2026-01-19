@@ -48,6 +48,7 @@ species rioter parent:boid control:simple_bdi{
 	float charisma <- extroversion;
 	float receptivity <- 1-neurotism;
     float conscientiousness <- 1.0; // Force to keep plans and intentions
+    float inter_species_receptivity <- rnd(receptivity);
     bool emotional_contagion_activated <- P_emotional_contagion_activated;
     float emotional_contagion_threshold <- P_emotional_contagion_threshold;
     
@@ -75,6 +76,14 @@ species rioter parent:boid control:simple_bdi{
 	list possible_positive_emotions <- ["hope", "joy"];
 	int N_possible_negative_emotions <- length(possible_negative_emotions);
 	int N_possible_positive_emotions <- length(possible_positive_emotions);
+	map<string,string> contrary_emotion <- [
+		"anger"::"fear",
+		"fear"::"hope",
+		"sadness"::"joy",
+		"fear"::"anger",
+		"hope"::"fear",
+		"joy"::"sadness"
+	];
 	float felt_negative_emotions;
 	
 	float k_liking <- P_rioter_k_liking; // 1.0
@@ -377,11 +386,21 @@ species rioter parent:boid control:simple_bdi{
    	}
    	   	
    	/// /// Emotional Contagion /// ///   	
-   	
+   	bool inter_emotional_contagion <- false;
    	/* run the full process of emotional contagion manually for rioters */
    	action process_emotional_contagion{
    		if focus = self {write " -- process_emotional_contagion -- ";}
    		
+   		do emotion_contagion_for_rioter;
+   		
+   		if inter_emotional_contagion{
+   			do emotion_contagion_for_policeman;
+   		}
+   		
+   		
+   	}
+   	
+   	action emotion_contagion_for_rioter{
    		loop single_rioter over:rioter at_distance view_dist{
    			float emotion_contagion_factor <- single_rioter.charisma*receptivity;
    			
@@ -465,6 +484,90 @@ species rioter parent:boid control:simple_bdi{
 	   	}
    	}
    	
+   	action emotion_contagion_for_policeman{
+   		loop single_police_officer over:police_officer at_distance view_dist{
+   			float emotion_contagion_factor <- single_police_officer.charisma*receptivity*inter_species_receptivity;
+   			if emotion_contagion_factor > emotional_contagion_threshold {
+   				list<emotion> collected_emotions;
+		   		ask single_police_officer{
+		   			if focus = self {
+		   				write "seen single_police_officer self.emotion_base:"+self.emotion_base;
+		   			}
+		   			loop single_emotion over:self.emotion_base{
+		   				if single_emotion.name = "fear" 
+		   				   or single_emotion.name = "fear_confirmed"  // potentially to remove
+		   				   or single_emotion.name = "anger" // potentially to remove
+		   				   or single_emotion.name = "sadness"
+		   				   or single_emotion.name = "reproach"{
+		   				   	add copy(single_emotion) to: collected_emotions;
+		   				}
+		   				
+		   				/*
+		   				else if single_emotion.name = "fear_confirmed" {
+		   					emotion detected_emotion <- new_emotion("fear",
+								get_intensity(single_emotion),
+								get_about(single_emotion),
+								get_decay(single_emotion),
+								get_agent_cause(single_emotion)
+							);
+							add copy(detected_emotion) to: collected_emotions;
+		   				}
+		   				* 
+		   				*/
+		   			}
+		   		}
+		   			
+		   		if focus = self {write "collected_emotions:"+collected_emotions;}
+		   			
+		   		
+		   		loop single_collected_emotion over: collected_emotions{
+		   			if focus = self {
+		   				write "	++ predicates collected";
+		   				write " ++" + single_collected_emotion.about;
+		   			}
+		   			
+		   			emotion already_possessed_emotion <- get_emotion(single_collected_emotion);
+		   			emotion result_emotion <- single_collected_emotion;
+		   			float result_intensity;
+		   			float result_decay;
+		   			
+		   			if focus = self {
+			   			write "already_possessed_emotion:"+already_possessed_emotion;
+			   			if !(already_possessed_emotion = nil) {
+			   				write "	++ predicates already";
+			   				write " ++" +already_possessed_emotion.about;
+			   			}	
+			   		}
+		   			
+		   			if already_possessed_emotion=nil {
+		   				result_intensity <- single_collected_emotion.intensity*emotion_contagion_factor;
+		   				result_decay <- single_collected_emotion.decay;
+		   			} else {
+		   				result_intensity <- 
+			   				already_possessed_emotion.intensity
+			   				+single_collected_emotion.intensity*emotion_contagion_factor;
+			   				
+			   				
+			   			if already_possessed_emotion.intensity<single_collected_emotion.intensity{
+			   				result_decay <- single_collected_emotion.decay;
+			   			} else {
+			   				result_decay <- single_collected_emotion.decay;
+			   			}
+			   			
+		   			}
+					result_emotion <- new_emotion(contrary_emotion[result_emotion.name],result_intensity,result_emotion.about,result_decay);	
+					   			
+		   			if focus = self {
+			   			write result_emotion;
+			   			write "new_emotion="+":"+string(result_emotion.intensity);
+		   			}
+					do add_emotion(result_emotion);
+				}
+   			}
+	   	}
+   			
+
+   	}
    	/// /// Emotions /// ///
    	
    	/* inference process of the agent connecting beliefs to the predicates used in desires */
@@ -496,7 +599,7 @@ species rioter parent:boid control:simple_bdi{
 	   					loop emotion_name over: state_to_events_to_emotions[state_name][event_name]{
 	   						list<predicate> beliefs_from_event <- get_beliefs(
 	   							new_predicate(event_name)
-	   							) accumulate each; //each.predicate????????
+	   							) accumulate mental_state (each).predicate; //each.predicate????????
 	   						loop single_belief_from_event over: beliefs_from_event{
 	   							do handle_bdi_process_for_emotion(emotion_name:emotion_name,original_belief:single_belief_from_event);
 	   						}
@@ -532,7 +635,7 @@ species rioter parent:boid control:simple_bdi{
 				add single_emotion.cause.name to: influencing_police_names;
 			}
 		}		
-		map<string,map<string,float>> emotion_to_police_name_to_max_induced;
+		map<unknown,map<string,float>> emotion_to_police_name_to_max_induced;
 		loop emotion_name over:(possible_positive_emotions+possible_negative_emotions){
 			emotion_to_police_name_to_max_induced[emotion_name] <- [];
 			loop police_cause_name over:influencing_police_names{
@@ -620,7 +723,7 @@ species rioter parent:boid control:simple_bdi{
 	
 	/* update the overall psychological distress of the agent */
 	action update_felt_negative_emotions{
-		map<string,float> emotion_to_max_intensity;
+		map<unknown,float> emotion_to_max_intensity;
 		loop emotion_name over: possible_negative_emotions{
 			emotion_to_max_intensity[emotion_name] <- 0.0;
 		}
@@ -784,7 +887,7 @@ species rioter parent:boid control:simple_bdi{
 		do update_violence_parameters;
 		
 		do handle_state_transition;
-	}
+	} 
 		
 	/// /// /// /// PLANS /// /// /// ///
 	
@@ -943,21 +1046,7 @@ species rioter parent:boid control:simple_bdi{
 	
 	
 	init {
-		loop single_state over: state_to_events_to_emotions.keys {
-			assert authorized_states contains single_state;
-		}
-		
-		loop event_to_emotions over: state_to_events_to_emotions {
-			loop single_event over: event_to_emotions.keys{
-				//assert is_event_to_detect.keys contains single_event;
-				//is_event_to_detect[single_event] <- true;
-				
-				loop single_emotion over: event_to_emotions[single_event]{
-					assert authorized_emotions contains single_emotion;
-				}
-			}
-		} 
-		
+		  
 		do add_desire(flock);
 		
 		do add_desire(new_predicate("injustice",false));

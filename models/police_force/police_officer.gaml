@@ -24,8 +24,10 @@ species police_officer parent:basic_pedestrian control:simple_bdi skills:[moving
 	bool can_die <- false;
 	
 	float view_dist <- P_dmax; // TO GIVE
+	float view_dist_alert <- P_dmax;
 	float arrest_dist <- P_arrest_dist;
 	float dmax_my_position_team <- P_dmax_my_position_team;
+	
 	
 	geometry arrow_shape(float size, float shape_angle){
 		point X_head<-{size*cos(heading),size*sin(heading)}+location;
@@ -51,19 +53,28 @@ species police_officer parent:basic_pedestrian control:simple_bdi skills:[moving
 	// PARAMETERS
 	bool use_emotions_architecture <- true;
     bool use_personality <- true;
+    float extroversion <- rnd(1.0);
+	float neurotism <- rnd(rnd(0.2,0.4),1.0);
+	float charisma <- extroversion;
+	float receptivity <- 1-neurotism;
+	float inter_species_receptivity <- rnd(receptivity);
+    float conscientiousness <- 1.0;
+    float emotional_contagion_threshold <- P_emotional_contagion_threshold;
     
     float resistance_init<-P_police_resistance_init;
 	
-	
+	float threshold_alert <- rnd(0.4,1.0);
 	// Team parameters
 	team my_team;
 	point my_position_team <- location;
+	float violence_threshold <- rnd(1.0); 
 	
 	arrest_team my_arrest_team;
 	point my_position_arrest_team <- location;
 	agent my_arrest_target;
 	float record_arrest_contribution;
 	
+	float felt_negative_emotions;
 	/* receive and store the target position assigned by the team */
 	action receive_my_position_from_team (point sent_position) {
 		//write "receive_my_position_from_team";
@@ -82,9 +93,10 @@ species police_officer parent:basic_pedestrian control:simple_bdi skills:[moving
 	
 	
 	// DESIRES
+	/*It is the state not emotionnal but the state order by his team */
 	predicate keepFormation <- new_predicate("keepFormation");
 	predicate protect <- new_predicate("protect"); 
-	predicate retreat <- new_predicate("retreat");
+	predicate back <- new_predicate("back");
 	// injuresMe (only by keyword)
 	// loseFight (only by keyword)
 	
@@ -94,6 +106,9 @@ species police_officer parent:basic_pedestrian control:simple_bdi skills:[moving
 	// nameAgentFormationWith
 	
 	list<rioter> detected_violent_offenders update: detected_violent_offenders at_distance view_dist;//handled by hand
+	list<rioter> rioter_around update: rioter at_distance view_dist;//handled by hand
+	list<police_officer> police_officer_around update: police_officer at_distance view_dist;//handled by hand
+	
 	
 	/* receive the information that a violent offender is around (e.g., because in vision range).
 	 * 
@@ -110,15 +125,7 @@ species police_officer parent:basic_pedestrian control:simple_bdi skills:[moving
 	// keepFormation, protect (intendToProtect, defineVictimTarget), retreat
 	predicate opportunityToArrest <- new_predicate("opportunityToArrest");
 	
-	init {
-		do add_desire(keepFormation);
-		//do add_desire(protect);
-		
-		do add_desire(new_predicate("injuresMe",false));
-		do add_ideal(new_predicate("injuresMe"),-1.0,-1);
-		
-		//write "cop "+name+" is created - arrest_dist: "+arrest_dist;
-	}
+	
 	
 	// RULES
 	rule desire:retreat remove_intention:protect;
@@ -127,21 +134,21 @@ species police_officer parent:basic_pedestrian control:simple_bdi skills:[moving
 	map<string,bool> is_in_state <- [
 		"formation"::false,
 		"protect"::false,
-		"retreat"::false
+		"back"::false
 	];
 	bool has_desire_formation update:has_desire_op(self,keepFormation);
 	bool has_desire_protect update:has_desire_op(self,protect);
-	bool has_desire_retreat update:has_desire_op(self,retreat);
+	bool has_desire_back update:has_desire_op(self,back);
 	
 	/* update internal state variables based on current desires */
-	action update_state_from_desires{
+	action update_order_from_desires{
 		assert has_desire_formation label:"should always have formation desire";
-		assert int(has_desire_protect)+int(has_desire_retreat) < 2  label:"cannot have both protect and retreat desires:"+desire_base;
+		assert int(has_desire_protect)+int(has_desire_back) < 2  label:"cannot have both protect and retreat desires:"+desire_base;
 		if (focus=self){write "desire_base:"+desire_base;}
 		
-		is_in_state["formation"] <- has_desire_formation and !(has_desire_protect or has_desire_retreat);
+		is_in_state["formation"] <- has_desire_formation and !(has_desire_protect or has_desire_back);
 		is_in_state["protect"] <- has_desire_protect;
-		is_in_state["retreat"] <- has_desire_retreat;
+		is_in_state["retreat"] <- has_desire_back;
 	}
 	
 	/* handles the reception of injuries */
@@ -154,7 +161,7 @@ species police_officer parent:basic_pedestrian control:simple_bdi skills:[moving
 	}
 	
 	/* check that an arrest is possible */
-	reflex update_opportunityToArrest{			
+	reflex update_opportunityToArrest {			
 		if (length(detected_violent_offenders)>0){
 			do add_belief(opportunityToArrest,1.0,1);
 			ask my_team{
@@ -216,7 +223,7 @@ species police_officer parent:basic_pedestrian control:simple_bdi skills:[moving
 	}
 	
 	/* flee from the isobarycenter of detected violent offenders */
-	plan retreat intention:retreat{
+	plan retreat intention:back{
 		if (focus=self){write "-- PLAN retreat -- of "+name;}
 		
 		if (empty(detected_violent_offenders)){
@@ -272,5 +279,369 @@ species police_officer parent:basic_pedestrian control:simple_bdi skills:[moving
 		
 		
 		
+	}
+	//Emotion Contagion and emotion//
+	map<string,string> contrary_emotion <- [
+		"anger"::"fear",
+		"fear"::"hope",
+		"sadness"::"joy",
+		"fear"::"anger",
+		"hope"::"fear",
+		"joy"::"sadness"
+	];
+	
+	bool inter_emotional_contagion <- false;
+	/* run the full process of emotional contagion manually for police officers */
+   	action process_emotional_contagion{
+   		if focus = self {write " -- process_emotional_contagion -- ";}
+   		do emotion_contagion_for_policeman;
+   		
+   		if inter_emotional_contagion{
+   			do emotion_contagion_for_rioter;
+   		}
+   		
+   		
+   	}
+   	
+   	action emotion_contagion_for_rioter{
+   		loop single_rioter over:rioter at_distance view_dist{
+   			float emotion_contagion_factor <- single_rioter.charisma*receptivity*inter_species_receptivity;
+   			
+   			if emotion_contagion_factor > emotional_contagion_threshold {
+   				list<emotion> collected_emotions;
+		   		ask single_rioter{
+		   			if focus = self {
+		   				write "seen rioter self.emotion_base:"+self.emotion_base;
+		   			}
+		   			loop single_emotion over:self.emotion_base{
+		   				if single_emotion.name = "fear" 
+		   				   or single_emotion.name = "fear_confirmed"  // potentially to remove
+		   				   or single_emotion.name = "anger" // potentially to remove
+		   				   or single_emotion.name = "sadness"
+		   				   or single_emotion.name = "reproach"{
+		   				   	add copy(single_emotion) to: collected_emotions;
+		   				}
+		   				
+		   				/*
+		   				else if single_emotion.name = "fear_confirmed" {
+		   					emotion detected_emotion <- new_emotion("fear",
+								get_intensity(single_emotion),
+								get_about(single_emotion),
+								get_decay(single_emotion),
+								get_agent_cause(single_emotion)
+							);
+							add copy(detected_emotion) to: collected_emotions;
+		   				}
+		   				* 
+		   				*/
+		   			}
+		   		}
+		   			
+		   		if focus = self {write "collected_emotions:"+collected_emotions;}
+		   			
+		   		
+		   		loop single_collected_emotion over: collected_emotions{
+		   			if focus = self {
+		   				write "	++ predicates collected";
+		   				write " ++" + single_collected_emotion.about;
+		   			}
+		   			
+		   			emotion already_possessed_emotion <- get_emotion(single_collected_emotion);
+		   			emotion result_emotion <- single_collected_emotion;
+		   			float result_intensity;
+		   			float result_decay;
+		   			
+		   			if focus = self {
+			   			write "already_possessed_emotion:"+already_possessed_emotion;
+			   			if !(already_possessed_emotion = nil) {
+			   				write "	++ predicates already";
+			   				write " ++" +already_possessed_emotion.about;
+			   			}	
+			   		}
+		   			
+		   			if already_possessed_emotion=nil {
+		   				result_intensity <- single_collected_emotion.intensity*emotion_contagion_factor;
+		   				result_decay <- single_collected_emotion.decay;
+		   			} else {
+		   				result_intensity <- 
+			   				already_possessed_emotion.intensity
+			   				+single_collected_emotion.intensity*emotion_contagion_factor;
+			   				
+			   				
+			   			if already_possessed_emotion.intensity<single_collected_emotion.intensity{
+			   				result_decay <- single_collected_emotion.decay;
+			   			} else {
+			   				result_decay <- single_collected_emotion.decay;
+			   			}
+			   			
+		   			}
+					result_emotion <- new_emotion(contrary_emotion[result_emotion.name],result_intensity,result_emotion.about,result_decay);		
+					   			
+		   			if focus = self {
+			   			write result_emotion;
+			   			write "new_emotion="+":"+string(result_emotion.intensity);
+		   			}
+					do add_emotion(result_emotion);
+				}
+   			}
+	   	}
+   	}
+   	
+   	action emotion_contagion_for_policeman{
+   		loop single_police_officer over:police_officer at_distance view_dist{
+   			float emotion_contagion_factor <- single_police_officer.charisma*receptivity;
+   			if emotion_contagion_factor > emotional_contagion_threshold {
+   				list<emotion> collected_emotions;
+		   		ask single_police_officer{
+		   			if focus = self {
+		   				write "seen single_police_officer self.emotion_base:"+self.emotion_base;
+		   			}
+		   			loop single_emotion over:self.emotion_base{
+		   				if single_emotion.name = "fear" 
+		   				   or single_emotion.name = "fear_confirmed"  // potentially to remove
+		   				   or single_emotion.name = "anger" // potentially to remove
+		   				   or single_emotion.name = "sadness"
+		   				   or single_emotion.name = "reproach"{
+		   				   	add copy(single_emotion) to: collected_emotions;
+		   				}
+		   				
+		   				/*
+		   				else if single_emotion.name = "fear_confirmed" {
+		   					emotion detected_emotion <- new_emotion("fear",
+								get_intensity(single_emotion),
+								get_about(single_emotion),
+								get_decay(single_emotion),
+								get_agent_cause(single_emotion)
+							);
+							add copy(detected_emotion) to: collected_emotions;
+		   				}
+		   				* 
+		   				*/
+		   			}
+		   		}
+		   			
+		   		if focus = self {write "collected_emotions:"+collected_emotions;}
+		   			
+		   		
+		   		loop single_collected_emotion over: collected_emotions{
+		   			if focus = self {
+		   				write "	++ predicates collected";
+		   				write " ++" + single_collected_emotion.about;
+		   			}
+		   			
+		   			emotion already_possessed_emotion <- get_emotion(single_collected_emotion);
+		   			emotion result_emotion <- single_collected_emotion;
+		   			float result_intensity;
+		   			float result_decay;
+		   			
+		   			if focus = self {
+			   			write "already_possessed_emotion:"+already_possessed_emotion;
+			   			if !(already_possessed_emotion = nil) {
+			   				write "	++ predicates already";
+			   				write " ++" +already_possessed_emotion.about;
+			   			}	
+			   		}
+		   			
+		   			if already_possessed_emotion=nil {
+		   				result_intensity <- single_collected_emotion.intensity*emotion_contagion_factor;
+		   				result_decay <- single_collected_emotion.decay;
+		   			} else {
+		   				result_intensity <- 
+			   				already_possessed_emotion.intensity
+			   				+single_collected_emotion.intensity*emotion_contagion_factor;
+			   				
+			   				
+			   			if already_possessed_emotion.intensity<single_collected_emotion.intensity{
+			   				result_decay <- single_collected_emotion.decay;
+			   			} else {
+			   				result_decay <- single_collected_emotion.decay;
+			   			}
+			   			
+		   			}
+					result_emotion <- new_emotion(result_emotion.name,result_intensity,result_emotion.about,result_decay);		
+					   			
+		   			if focus = self {
+			   			write result_emotion;
+			   			write "new_emotion="+":"+string(result_emotion.intensity);
+		   			}
+					do add_emotion(result_emotion);
+				}
+   			}
+	   	}
+   			
+
+   	}
+   	
+   	   	/// /// Emotions /// ///
+   	 map<string,map<string,list<string>>> state_to_events_to_emotions <- P_state_to_events_to_emotions;
+   	 list<string> authorized_states <- ["violent","retreat","alert","calm"];
+   	 map<string,bool> is_event_to_detect <- [
+	    "spatial_incursion"::P_spatial_incursion_to_detect,
+	    "outnumbered"::P_outnumbered_to_detect,
+	    "order_to_scatter_signal"::P_order_to_scatter_signal_to_detect
+    ];
+    map<string,bool> is_event_detected <- copy(is_event_to_detect) update:convert_map_values_to_false(is_event_detected);
+    
+    map<unknown,bool> convert_map_values_to_false(map<unknown,bool> map_to_bool){
+    	loop k over:map_to_bool.keys{
+    		map_to_bool[k]<-false;
+    	}
+    	return map_to_bool;
+    }
+   	list<string> authorized_emotions <- ["fear","anger","fear_confirmed"];
+   	
+   	/* inference process of the agent connecting beliefs to the predicates used in desires */
+   	action handle_bdi_process_for_emotion(string emotion_name, predicate original_belief){
+   		assert emotion_name in authorized_emotions;
+   		
+   		string belief_name <- original_belief.name;
+   		agent belief_agent_cause <- original_belief.cause;
+		
+   		if emotion_name = "fear" {
+   			do add_uncertainty(new_predicate("safe",["belief_name"::belief_name],false,belief_agent_cause),0.5,1);
+   		} else if emotion_name = "anger" {
+   			do add_belief(new_predicate("injustice",["belief_name"::belief_name],belief_agent_cause),1.0,1); 
+   			do add_belief(new_predicate("injustice",["belief_name"::belief_name],belief_agent_cause),1.0,1);
+   		} else if emotion_name = "fear_confirmed" {
+   			do add_uncertainty(new_predicate("safe",["belief_name"::belief_name],false,belief_agent_cause),0.5,1);
+   			do add_belief(new_predicate("safe",["belief_name"::belief_name],false,belief_agent_cause),1.0,1); 
+   		}
+   	}
+   	
+   	/*
+   	 * Takes the events and correlates them to emotions depending on the current state of the agent
+   	 */ 	
+   	action create_emotions_from_direct_events {
+   		loop state_name over: is_in_state.keys{
+   			if is_in_state[state_name] and state_to_events_to_emotions.keys contains state_name{
+	   			loop event_name over: is_event_to_detect.keys{
+	   				if is_event_detected[event_name]{
+	   					loop emotion_name over: state_to_events_to_emotions[state_name][event_name]{
+	   						list<predicate> beliefs_from_event <- get_beliefs(
+	   							new_predicate(event_name)
+	   							) accumulate mental_state (each).predicate; 
+	   						loop single_belief_from_event over: beliefs_from_event{
+	   							do handle_bdi_process_for_emotion(emotion_name:emotion_name,original_belief:single_belief_from_event);
+	   						}
+	   					}
+	   				}
+	   			}
+	   		}
+   		}
+   		if focus = self {
+   			write name +" emotion_base:"+emotion_base;
+   			write "+ has_fear:"+has_emotion(new_emotion("fear"));
+   			write "+ has_fear_confirmed:"+has_emotion(new_emotion("fear_confirmed"));
+   			write "+ has_anger:"+has_emotion(new_emotion("anger"));
+   		}
+   	}    
+   	
+   	/* set the intensity decay of all emotions */
+   	action set_emotion_decay {
+   		loop single_emotion over: emotion_base{
+   			single_emotion <- new_emotion(single_emotion.name, single_emotion.intensity, single_emotion.about, P_emotion_decay);//set_decay(single_emotion,P_emotion_decay);
+   		} 
+   	}
+   	
+   	
+	/// /// Desires or state transitions /// ///
+	predicate calm <- new_predicate("calm");
+	predicate alert <- new_predicate("alert");
+	predicate violent <- new_predicate("violent"); 
+	predicate retreat <- new_predicate("retreat");
+	
+	map<string,bool> is_in_state_behavior <- [
+		"calm"::false,
+		"alert"::false,
+		"violent"::false,
+		"retreat"::false
+	];
+	bool has_desire_calm update:has_desire_op(self,calm);
+	bool has_desire_alert update:has_desire_op(self,alert);
+	bool has_desire_violent update:has_desire_op(self,violent);
+	bool has_desire_retreat update:has_desire_op(self,retreat);
+	
+	/* adapt the current perceived state from the activated desire */
+	action update_state_bis_from_desires{
+		assert has_desire_calm label:"should always have calm desire";
+		assert int(has_desire_violent)+int(has_desire_retreat) < 2  label:"cannot have both violent and retreat desires:"+desire_base;
+		
+		
+		is_in_state_behavior["calm"] <- has_desire_calm and !(has_desire_violent or has_desire_retreat or has_desire_alert);
+		is_in_state_behavior["alert"] <- has_desire_alert;
+		is_in_state_behavior["violent"] <- has_desire_violent;
+		is_in_state_behavior["retreat"] <- has_desire_retreat;
+		
+		if (focus=self){
+			//write "desire_base:"+desire_base;
+			//write "is_in_state:"+is_in_state;
+		}
+	}
+	
+	float violence_detected{
+		return length(detected_violent_offenders) / (length(rioter_around) + length(police_officer_around));
+	}
+	float alert_threshold <- rnd(violence_threshold);
+	bool retreat_order <- false;
+	bool imminent_danger <- false;
+	
+	/*the du=ifferents transitions between the sate that apolice man could be */
+	action handle_state_transition {
+		// neutral by default if no violent or retreat intention
+		if is_in_state_behavior["alert"]{
+			if violence_detected() > violence_threshold {
+				do remove_intention(alert,true);
+				do add_desire(violent,20.0,5);
+			}
+			else if  retreat_order or imminent_danger {
+				do remove_intention(alert,true);
+				do add_desire(retreat,20.0,5);
+			}
+		}
+		else if is_in_state_behavior["violent"]{
+			if violence_detected() < violence_threshold {
+				do remove_intention(violent,true);
+				do add_desire(alert,20.0,5);
+			}
+			else if  retreat_order or imminent_danger {
+				do remove_intention(violent,true);
+				do add_desire(retreat,20.0,5);
+			}
+		}else if is_in_state_behavior["retreat"]{
+			if !(retreat_order or imminent_danger) {
+				do remove_intention(retreat,true);
+				do add_desire(alert,20.0,5);
+			}
+			if  !(retreat_order or imminent_danger) and violence_detected() > violence_threshold{
+				do remove_intention(retreat,true);
+				do add_desire(violent,20.0,5);
+			}
+		}else{
+			if violence_detected() > alert_threshold or has_desire_protect{
+				do add_desire(alert,20.0,5);
+			}
+		}
+	}
+	
+	bool emotional_contagion_activated <- P_emotional_contagion_activated;
+	reflex{
+		do update_state_bis_from_desires;
+		if emotional_contagion_activated {
+			do process_emotional_contagion;
+		} 
+		do set_emotion_decay;
+		do handle_state_transition;
+	}
+	
+	init {
+		
+		do add_desire(keepFormation);
+		do add_desire(calm);
+		//do add_desire(protect);
+		
+		do add_desire(new_predicate("injuresMe",false));
+		do add_ideal(new_predicate("injuresMe"),-1.0,-1);
+		
+		//write "cop "+name+" is created - arrest_dist: "+arrest_dist;
 	}
 }

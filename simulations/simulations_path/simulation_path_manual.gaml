@@ -303,6 +303,19 @@ experiment path_manual_gui  benchmark:false type:gui until:(cycle*step>3*3600){
 			}
 		}
 		
+		display Police_information refresh: every(1#cycles)  type: 2d {
+			chart "Emotion" type: series size: {0.5,1.0} position: {0, 0.0} {
+				data "n_policer_with_fear" value: police_officer count (each.has_emotion(new_emotion("fear"))) color:#blue;
+				data "n_policer_with_fear_confirmed" value: police_officer count (each.has_emotion(new_emotion("fear_confirmed"))) color:#green;
+			}
+			chart "State" type: series size: {0.5,1.0} position: {0.5, 0.0} {
+				data "n_policer_with_calm" value: police_officer count (each.is_in_state_behavior['calm']) color:#blue;
+				data "n_policer_with_alert" value: police_officer count (each.is_in_state_behavior['alert']) color:#green;
+				data "n_policer_with_violent" value: police_officer count (each.is_in_state_behavior['violent']) color:#purple;
+				data "n_policer_with_retreat" value: police_officer count (each.is_in_state_behavior['violent']) color:#yellow;
+			}
+		}
+		/*
 		display Population_information_PSL refresh: every(1#cycles)  type: 2d {
 			chart "Police Social Liking" type: series size: {1.0,1.0} position: {0, 0.0} {
 				data "mean PSL" value: mean(rioter accumulate (each.aggregated_police_social_liking)) color:#blue;
@@ -312,7 +325,7 @@ experiment path_manual_gui  benchmark:false type:gui until:(cycle*step>3*3600){
 				data "min PSL influence" value: min(rioter accumulate (each.compute_police_social_liking_influence())) color:#orange;
 			}
 		}
-		
+		*/
 		display Population_information_violence refresh: every(1#cycles)  type: 2d {
 			chart "Violence" type: series size: {1.0,0.5} position: {0.0, 0.0} {
 				data "ratio violent" value: (rioter count (each.is_in_state["violent"]))/length(rioter) color:#red;
