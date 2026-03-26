@@ -96,6 +96,17 @@ global {
 	map<string,map<string,list<string>>> P_state_to_events_to_emotions;
 	float P_emotional_contagion_threshold;
    	
+   	//Inter-Emotional-Contagion
+	map<string,string> contrary_emotion <- [
+		"anger"::"fear",
+		"fear"::"hope",
+		"sadness"::"joy",
+		"fear"::"anger",
+		"hope"::"fear",
+		"joy"::"sadness"
+	];
+	
+	bool inter_emotional_contagion <- false;
    	// General protest configuration
    	bool P_use_damageable_items;
    	float P_duration_before_respawn_item;
@@ -113,6 +124,7 @@ global {
 	int P_kettling_n_ortho_cops;
 	int P_kettling_n_transverse_cops;
 	float P_kettling_dmax_cop_line_ortho;
+	
 	
 	// GRID
 	//int num_data <- 10 ;

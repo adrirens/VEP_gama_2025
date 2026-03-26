@@ -1,6 +1,0 @@
- 'species'::'breakable_item','cycle'::item_cyclesi,'time'::item_timesi,'name'::item_namesi,'x'::item_x_locsi,'y'::item_y_locsi,'current_resistance'::item_current_resistancei 
-breakable_item,0,0.0,breakable_item0,8.333333333333334,20.0,180.0
-breakable_item,0,0.0,breakable_item1,16.666666666666668,25.0,180.0
-breakable_item,0,0.0,breakable_item2,25.0,30.0,180.0
-breakable_item,0,0.0,breakable_item3,33.333333333333336,25.0,180.0
-breakable_item,0,0.0,breakable_item4,41.666666666666664,20.0,180.0

@@ -49,7 +49,24 @@ global {
 			    "surrounded"::["fear"]
 			    //"any_police_officer_around"::[]
 			    //"order_to_scatter_signal"::["fear"]
-			]
+			]/*,
+			"calm"::[
+			    "spatial_incursion"::["anger"],
+			    "outnumbered"::["fear"],
+			    //"unjust_arrest_around"::["anger"],
+			    "surrounded"::["fear"]
+			    //"any_police_officer_around"::[]
+			    //"order_to_scatter_signal"::["fear"]
+			],
+			"alert"::[
+			    "spatial_incursion"::["anger"],
+			    "outnumbered"::["fear"],
+			    //"unjust_arrest_around"::["anger"],
+			    "surrounded"::["fear"]
+			    //"any_police_officer_around"::[]
+			    //"order_to_scatter_signal"::["fear"]
+			]*/
+			
 		];
 		
 		create path_world_builder returns: world_builders;
@@ -177,6 +194,11 @@ global {
 	reflex write_cycle {
 			write "exp_id="+exp_id+" -- sim_id="+sim_id+" -- cycle:"+cycle+"-- previous duration (s):"+duration;
 		}
+		
+	reflex end_simu when : cycle*step > 4*3600 {
+		do pause;
+	}
+	
 }
 
 
@@ -293,8 +315,8 @@ experiment path_manual_gui  benchmark:false type:gui until:(cycle*step>3*3600){
 		
 		display Population_information refresh: every(1#cycles)  type: 2d {
 			chart "Emotions" type: series size: {0.5,1.0} position: {0, 0.0} {
-				data "n_rioter_with_fear" value: rioter count (each.has_emotion(new_emotion("fear"))) color:#blue;
-				data "n_rioter_with_fear_confirmed" value: rioter count (each.has_emotion(new_emotion("fear_confirmed"))) color:#green;
+				data "n_rioter_with_fear" value: rioter count (each.has_fear) color:#blue;
+				data "n_rioter_with_fear_confirmed" value: rioter count (each.has_fear_confirmed) color:#green;
 			}
 			
 			chart "Events detection" type:series size:{0.5,1.0} position: {0.5,0.0}{
@@ -305,14 +327,17 @@ experiment path_manual_gui  benchmark:false type:gui until:(cycle*step>3*3600){
 		
 		display Police_information refresh: every(1#cycles)  type: 2d {
 			chart "Emotion" type: series size: {0.5,1.0} position: {0, 0.0} {
-				data "n_policer_with_fear" value: police_officer count (each.has_emotion(new_emotion("fear"))) color:#blue;
-				data "n_policer_with_fear_confirmed" value: police_officer count (each.has_emotion(new_emotion("fear_confirmed"))) color:#green;
+				data "n_policer_with_fear" value: police_officer count (each.has_fear) color:#blue;
+				data "n_policer_with_fear_confirmed" value: police_officer count (each.has_fear_confirmed) color:#green;
 			}
+			
+			
 			chart "State" type: series size: {0.5,1.0} position: {0.5, 0.0} {
+				
 				data "n_policer_with_calm" value: police_officer count (each.is_in_state_behavior['calm']) color:#blue;
 				data "n_policer_with_alert" value: police_officer count (each.is_in_state_behavior['alert']) color:#green;
 				data "n_policer_with_violent" value: police_officer count (each.is_in_state_behavior['violent']) color:#purple;
-				data "n_policer_with_retreat" value: police_officer count (each.is_in_state_behavior['violent']) color:#yellow;
+				data "n_policer_with_retreat" value: police_officer count (each.is_in_state_behavior['retreat']) color:#yellow;
 			}
 		}
 		/*

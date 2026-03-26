@@ -1,0 +1,13 @@
+ 'species'::'police_officer','cycle'::police_cyclesi,'time'::police_timesi,'name'::police_namesi,'x'::police_x_locsi,'y'::police_y_locsi,'state_formation'::police_is_in_state_formationi,'state_protect'::police_is_in_state_protecti,'state_retreat'::police_is_in_state_retreati,'behavior_calm'::police_is_in_state_behavior_calmi,'behavior_alert'::police_is_in_state_behavior_alerti,'behavior_violent'::police_is_in_state_behavior_violenti,'behavior_retreat'::police_is_in_state_behavior_retreati,'has_fear_confirmed'::police_has_fear_confirmedi,'has_fear'::police_has_feari,'has_anger'::police_has_angeri,'has_sadness'::police_has_sadnessi,'has_joy'::police_has_joyi,'n_detected_violent_offenders'::police_n_detected_violent_offendersi,'record_arrest_contribution'::police_record_arrest_contributioni,'police_resistance'::police_resistancei 
+police_officer,0,0.0,police_officer0,49.00661967649281,12.133664424161895,false,false,nil,true,false,false,false,false,false,false,false,true,0,0.0,1000.0
+police_officer,0,0.0,police_officer1,1.6267566395857758,11.852124314345648,false,false,nil,true,false,false,false,false,false,false,false,true,0,0.0,1000.0
+police_officer,0,0.0,police_officer2,49.33080202964732,12.237364850432025,false,false,nil,true,false,false,false,false,false,false,false,true,0,0.0,1000.0
+police_officer,0,0.0,police_officer3,24.006619676492807,12.133664424161893,false,false,nil,true,false,false,false,false,false,false,false,true,0,0.0,1000.0
+police_officer,0,0.0,police_officer4,26.626756639585775,11.852124314345648,false,false,nil,true,false,false,false,false,false,false,false,true,0,0.0,1000.0
+police_officer,0,0.0,police_officer5,24.33080202964732,12.237364850432025,false,false,nil,true,false,false,false,false,false,false,false,true,0,0.0,1000.0
+police_officer,0,0.0,police_officer6,0.9933803235071915,37.86633557583811,false,false,nil,true,false,false,false,false,false,false,false,true,0,0.0,1000.0
+police_officer,0,0.0,police_officer7,48.37324336041422,38.147875685654355,false,false,nil,true,false,false,false,false,false,false,false,true,0,0.0,1000.0
+police_officer,0,0.0,police_officer8,0.6691979703526802,37.76263514956798,false,false,nil,true,false,false,false,false,false,false,false,true,0,0.0,1000.0
+police_officer,0,0.0,police_officer9,25.993380323507193,37.86633557583811,false,false,nil,true,false,false,false,false,false,false,false,true,0,0.0,1000.0
+police_officer,0,0.0,police_officer10,23.373243360414225,38.147875685654355,false,false,nil,true,false,false,false,false,false,false,false,true,0,0.0,1000.0
+police_officer,0,0.0,police_officer11,25.66919797035268,37.76263514956798,false,false,nil,true,false,false,false,false,false,false,false,true,0,0.0,1000.0

@@ -90,6 +90,15 @@ species data_recorder {
 	list police_is_in_state_formation; 
 	list police_is_in_state_protect; 
 	list police_is_in_state_retreat; 
+	list police_is_in_state_behavior_calm; 
+	list police_is_in_state_behavior_alert; 
+	list police_is_in_state_behavior_violent; 
+	list police_is_in_state_behavior_retreat; 
+	list police_has_fear_confirmed;
+	list police_has_fear;
+	list police_has_anger;
+	list police_has_sadness;
+	list police_has_joy;
 	list police_n_detected_violent_offenders;
 	list police_record_arrest_contribution;
 	list police_resistance;
@@ -167,11 +176,11 @@ species data_recorder {
 				add self.is_event_detected["order_to_scatter_signal"] to:myself.rioter_order_to_scatter_signal_detected;
 				add self.is_event_detected["arrest_around"] to:myself.rioter_arrest_around_detected;
 				
-				add self.has_emotion(new_emotion("fear_confirmed"))  to: myself.rioter_has_fear_confirmed;
-				add self.has_emotion(new_emotion("fear")) to:myself.rioter_has_fear;
-				add self.has_emotion(new_emotion("anger")) to:myself.rioter_has_anger;
-				add self.has_emotion(new_emotion("sadness")) to:myself.rioter_has_sadness;
-				add self.has_emotion(new_emotion("joy")) to:myself.rioter_has_joy;
+				add self.has_fear_confirmed  to: myself.rioter_has_fear_confirmed;
+				add self.has_fear to:myself.rioter_has_fear;
+				add self.has_anger to:myself.rioter_has_anger;
+				add self.has_sadness to:myself.rioter_has_sadness;
+				add self.has_joy to:myself.rioter_has_joy;
 				
 				add self.grievance to:myself.rioter_grievance;
 				add self.arrest_proba to:myself.rioter_arrest_proba;
@@ -198,6 +207,22 @@ species data_recorder {
 				add self.is_in_state["protect"] to: myself.police_is_in_state_protect;
 				add self.is_in_state["retreat"] to: myself.police_is_in_state_retreat;
 				
+				
+				add self.is_in_state["formation"] to: myself.police_is_in_state_formation;
+				add self.is_in_state["protect"] to: myself.police_is_in_state_protect;
+				add self.is_in_state["retreat"] to: myself.police_is_in_state_retreat;
+				
+				add self.is_in_state_behavior['calm'] to: myself.police_is_in_state_behavior_calm;
+				add self.is_in_state_behavior['alert'] to: myself.police_is_in_state_behavior_alert;
+				add self.is_in_state_behavior['violent'] to: myself.police_is_in_state_behavior_violent;
+				add self.is_in_state_behavior['retreat'] to: myself.police_is_in_state_behavior_retreat;
+				
+				add self.has_fear_confirmed  to: myself.police_has_fear_confirmed;
+				add self.has_fear to:myself.police_has_fear;
+				add self.has_anger to:myself.police_has_anger;
+				add self.has_sadness to:myself.police_has_sadness;
+				add self.has_joy to:myself.police_has_joy;
+				
 				add length(self.detected_violent_offenders) to:myself.police_n_detected_violent_offenders;
 				add self.record_arrest_contribution to:myself.police_record_arrest_contribution;
 				add self.current_resistance to: myself.police_resistance;
@@ -216,7 +241,7 @@ species data_recorder {
 				add self.arrest_target.name to: myself.arrest_target_names;
 			}
 		}
-		
+		/*
 		loop single_item over: breakable_item select (!dead(each)){
 			ask single_item{
 				add cycle to: myself.item_cycles;
@@ -226,7 +251,7 @@ species data_recorder {
 				add self.location.y to: myself.item_y_locs;
 				add self.current_resistance to: myself.item_current_resistance;
 			}
-		}
+		}*/
 	
 		ask metrics_handler{
 				add cycle to: myself.metrics_cycles;
@@ -304,6 +329,15 @@ species data_recorder {
 					"state_formation"::police_is_in_state_formation[i], 
 					"state_protect"::police_is_in_state_protect[i],
 					"state_retreat"::police_is_in_state_retreat[i],
+					"behavior_calm"::police_is_in_state_behavior_calm[i],
+					"behavior_alert"::police_is_in_state_behavior_alert[i],
+					"behavior_violent"::police_is_in_state_behavior_violent[i],
+					"behavior_retreat"::police_is_in_state_behavior_retreat[i],
+					"has_fear_confirmed"::police_has_fear_confirmed[i],
+					"has_fear"::police_has_fear[i],
+					"has_anger"::police_has_anger[i],
+					"has_sadness"::police_has_sadness[i],
+					"has_joy"::police_has_joy[i],
 					"n_detected_violent_offenders"::police_n_detected_violent_offenders[i],
 					"record_arrest_contribution"::police_record_arrest_contribution[i],
 					"police_resistance"::police_resistance[i]
@@ -334,7 +368,7 @@ species data_recorder {
 				header: true;
 			}
 		}
-		
+		/* 
 		if length(item_cycles) > 0 {
 			loop i from:0 to:length(item_cycles)-1 {
 				//write "i/length(item_cycles):"+i+"/"+length(item_cycles);
@@ -353,7 +387,7 @@ species data_recorder {
 				header: true;
 			}
 		}
-		
+		*/
 		if length(metrics_cycles) > 0 {
 			loop i from:0 to:length(metrics_cycles)-1 {
 				//write "i/length(metrics_cycles):"+i+"/"+length(metrics_cycles);
@@ -422,6 +456,11 @@ species data_recorder {
 		police_is_in_state_formation <- [];
 		police_is_in_state_protect <- [];
 		police_is_in_state_retreat <- [];
+		police_has_fear_confirmed <- [];
+		police_has_fear <- [];
+		police_has_anger <- [];
+		police_has_sadness <- [];
+		police_has_joy <- [];
 		police_n_detected_violent_offenders <- [];
 		police_record_arrest_contribution <- [];
 		police_resistance <- [];

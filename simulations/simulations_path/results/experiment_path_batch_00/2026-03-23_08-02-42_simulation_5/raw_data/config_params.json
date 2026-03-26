@@ -1,6 +1,6 @@
 {
-  "seed": 0.89987492,
-  "experiment_id": "path_manual_gui0",
+  "seed": 0.67986656,
+  "experiment_id": "path_batch_00",
   "building": [
     {
       "gaml_type": "pair<string, list<point>>",
@@ -421,6 +421,28 @@
       "surrounded": [
         "fear"
       ]
+    },
+    "calm": {
+      "spatial_incursion": [
+        "anger"
+      ],
+      "outnumbered": [
+        "fear"
+      ],
+      "surrounded": [
+        "fear"
+      ]
+    },
+    "alert": {
+      "spatial_incursion": [
+        "anger"
+      ],
+      "outnumbered": [
+        "fear"
+      ],
+      "surrounded": [
+        "fear"
+      ]
     }
   },
   "P_m_min": 80.0,
@@ -464,7 +486,7 @@
   "P_rioter_attack_threshold_max": 1.0,
   "P_rioter_retreat_threshold_min": 0.7,
   "P_rioter_retreat_threshold_max": 0.7,
-  "P_rioter_k_liking": 1.0,
+  "P_rioter_k_liking": 0.0017,
   "P_rioter_lifetime_triedRetreat": 300,
   "P_rioter_dist_spatial_incursion": 1.2,
   "P_rioter_ratio_cop_over_rioter_outnumbered": 3.0,
@@ -473,7 +495,7 @@
   "P_feeling_target_for_arrest_to_detect": true,
   "P_being_arrested_to_detect": true,
   "P_unjust_arrest_around_to_detect": false,
-  "P_surround_to_detect": false,
+  "P_surround_to_detect": true,
   "P_any_police_officer_around_to_detect": false,
   "P_order_to_scatter_signal_to_detect": false,
   "P_emotion_decay": 0.25,
@@ -487,5 +509,5 @@
   "P resistance init items": 180.0,
   "P_nb_rioters": 200,
   "P_path_n_subroads": 2,
-  "P_path_n_cops_per_subroad": 12
+  "P_path_n_cops_per_subroad": 3
 }

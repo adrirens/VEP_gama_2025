@@ -280,17 +280,87 @@ species police_officer parent:basic_pedestrian control:simple_bdi skills:[moving
 		
 		
 	}
-	//Emotion Contagion and emotion//
-	map<string,string> contrary_emotion <- [
-		"anger"::"fear",
-		"fear"::"hope",
-		"sadness"::"joy",
-		"fear"::"anger",
-		"hope"::"fear",
-		"joy"::"sadness"
-	];
 	
-	bool inter_emotional_contagion <- false;
+	/// /// list of emotional triggers /// ///
+   	float dist_spatial_incursion <- P_rioter_dist_spatial_incursion;
+   	
+   	float ratio_cop_over_policer_outnumbered <- P_rioter_ratio_cop_over_rioter_outnumbered * 3;
+   	
+   	/* check spatial incursion with police officers */
+   	action check_spatial_incursion {
+   		rioter closest_rioter <- rioter_around closest_to self;
+   		if closest_rioter != nil {
+   			is_event_detected["spatial_incursion"] <-  (
+	   			closest_rioter distance_to self < dist_spatial_incursion
+	   		);
+   		} else {
+   			is_event_detected["spatial_incursion"] <- false;
+   		}
+   		
+   		
+   		if is_event_detected["spatial_incursion"] {
+			loop single_officer over: (rioter_around at_distance dist_spatial_incursion){
+				do add_belief(new_predicate("spatial_incursion",single_officer),1.0,1);
+			}
+		} else {
+			do add_belief(new_predicate("spatial_incursion",false),1.0,1);
+		}
+   	}
+   	
+   	/* check rioters are currently outnumbered by police officers around the agent */
+   	action check_outnumbered {
+   		int N_police_officer_around <- length(police_officer_around)+1;
+   		is_event_detected["outnumbered"] <- (
+   			(length(rioter_around)+1)/N_police_officer_around > ratio_cop_over_policer_outnumbered
+   		);
+   		
+   		if is_event_detected["outnumbered"]{
+			loop single_rioter over: rioter_around{
+				do add_belief(new_predicate(
+					"outnumbered",
+					single_rioter			
+				),1.0,1);
+			}
+		} else {
+			do add_belief(new_predicate("outnumbered",false),1.0,1);
+		}
+   	}
+   	
+   	
+   
+   	/* check being surrounded by walls or police officers */
+   	action check_surrounded{
+		ask computer  {
+			myself.is_event_detected["surrounded"] <- is_surrounded(
+				obstacles:list(rioter),
+				n_subdivisions_to_surround:3, 
+				n_subdivisions:4, 
+				origin_location:myself.location,
+				perception_distance:myself.view_dist, 
+				init_angle:rnd(360.0)
+			);
+		}
+		if is_event_detected["surrounded"] {
+			loop single_rioter over: rioter_around{
+				do add_belief(new_predicate("surrounded",single_rioter),1.0,1);
+			}
+		} else {
+			do add_belief(new_predicate("surrounded",false),1.0,1);
+		}
+	}
+	
+	action process_events {
+   		if is_event_to_detect["spatial_incursion"]{do check_spatial_incursion;}
+   		if is_event_to_detect["outnumbered"]{do check_outnumbered;}
+   		if focus = self {
+   			write "+++";
+   			write is_event_detected;
+   			write "+++";
+   		}
+   	}
+   	
+	
+	
 	/* run the full process of emotional contagion manually for police officers */
    	action process_emotional_contagion{
    		if focus = self {write " -- process_emotional_contagion -- ";}
@@ -509,11 +579,10 @@ species police_officer parent:basic_pedestrian control:simple_bdi skills:[moving
    	}
    	
    	/*
-   	 * Takes the events and correlates them to emotions depending on the current state of the agent
-   	 */ 	
+   	 * Takes the events and correlates them to emotions depending on the current state of the agent*/ 	
    	action create_emotions_from_direct_events {
-   		loop state_name over: is_in_state.keys{
-   			if is_in_state[state_name] and state_to_events_to_emotions.keys contains state_name{
+   		loop state_name over: is_in_state_behavior.keys{
+   			if is_in_state_behavior[state_name] and state_to_events_to_emotions.keys contains state_name{
 	   			loop event_name over: is_event_to_detect.keys{
 	   				if is_event_detected[event_name]{
 	   					loop emotion_name over: state_to_events_to_emotions[state_name][event_name]{
@@ -536,13 +605,38 @@ species police_officer parent:basic_pedestrian control:simple_bdi skills:[moving
    		}
    	}    
    	
+   	bool has_fear;
+   	bool has_fear_confirmed; 
+   	bool has_sadness;
+   	bool has_anger;
+   	bool has_joy;
+   	float fear_rate <- 0.05;
    	/* set the intensity decay of all emotions */
    	action set_emotion_decay {
+   		has_fear_confirmed <- false;
+   		has_fear <- false;
+   		has_sadness <- false;
+   		has_anger <-false;
+   		has_joy <- false;
    		loop single_emotion over: emotion_base{
    			single_emotion <- new_emotion(single_emotion.name, single_emotion.intensity, single_emotion.about, P_emotion_decay);//set_decay(single_emotion,P_emotion_decay);
+   			if single_emotion.name = "fear" and single_emotion.intensity > fear_rate{
+   				has_fear <- true;
+   			}
+   			if single_emotion.name = "fear_confirmed" and single_emotion.intensity > fear_rate{
+   				has_fear_confirmed <- true;
+   			}
+   			if single_emotion.name = "anger" and single_emotion.intensity > fear_rate{
+   				has_anger <- true;
+   			}
+   			if single_emotion.name = "joy" and single_emotion.intensity > fear_rate{
+   				has_joy <- true;
+   			}
+   			if single_emotion.name = "sadness" and single_emotion.intensity > fear_rate{
+   				has_sadness <- true;
+   			}
    		} 
    	}
-   	
    	
 	/// /// Desires or state transitions /// ///
 	predicate calm <- new_predicate("calm");
@@ -629,6 +723,10 @@ species police_officer parent:basic_pedestrian control:simple_bdi skills:[moving
 		if emotional_contagion_activated {
 			do process_emotional_contagion;
 		} 
+		
+		do process_events;
+		do create_emotions_from_direct_events;
+		
 		do set_emotion_decay;
 		do handle_state_transition;
 	}

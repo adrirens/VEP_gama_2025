@@ -49,7 +49,24 @@ global {
 			    "surrounded"::["fear"]
 			    //"any_police_officer_around"::[]
 			    //"order_to_scatter_signal"::["fear"]
+			],
+			"calm"::[
+			    "spatial_incursion"::["anger"],
+			    "outnumbered"::["fear"],
+			    //"unjust_arrest_around"::["anger"],
+			    "surrounded"::["fear"]
+			    //"any_police_officer_around"::[]
+			    //"order_to_scatter_signal"::["fear"]
+			],
+			"alert"::[
+			    "spatial_incursion"::["anger"],
+			    "outnumbered"::["fear"],
+			    //"unjust_arrest_around"::["anger"],
+			    "surrounded"::["fear"]
+			    //"any_police_officer_around"::[]
+			    //"order_to_scatter_signal"::["fear"]
 			]
+			
 		];
 		
 		create path_world_builder returns: world_builders;
@@ -177,6 +194,9 @@ global {
 	reflex write_cycle {
 			write "exp_id="+exp_id+" -- sim_id="+sim_id+" -- cycle:"+cycle+"-- previous duration (s):"+duration;
 		}
+	reflex end_simu when : cycle*step > 4*3600{
+		do pause;
+	}
 }
 
 

@@ -1,4 +1,4 @@
-/**
+ /**
 * Name: simulationkettling
 * Based on the internal empty template. 
 * Author: rosenberger
@@ -51,7 +51,24 @@ global {
 			    "surrounded"::["fear"]
 			    //"any_police_officer_around"::[]
 			    //"order_to_scatter_signal"::["fear"]
+			],
+			"calm"::[
+			    "spatial_incursion"::["anger"],
+			    "outnumbered"::["fear"],
+			    //"unjust_arrest_around"::["anger"],
+			    "surrounded"::["fear"]
+			    //"any_police_officer_around"::[]
+			    //"order_to_scatter_signal"::["fear"]
+			],
+			"alert"::[
+			    "spatial_incursion"::["anger"],
+			    "outnumbered"::["fear"],
+			    //"unjust_arrest_around"::["anger"],
+			    "surrounded"::["fear"]
+			    //"any_police_officer_around"::[]
+			    //"order_to_scatter_signal"::["fear"]
 			]
+			
 		];
 		
 		create kettling_world_builder returns: world_builders;

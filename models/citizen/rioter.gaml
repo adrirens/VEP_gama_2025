@@ -76,14 +76,6 @@ species rioter parent:boid control:simple_bdi{
 	list possible_positive_emotions <- ["hope", "joy"];
 	int N_possible_negative_emotions <- length(possible_negative_emotions);
 	int N_possible_positive_emotions <- length(possible_positive_emotions);
-	map<string,string> contrary_emotion <- [
-		"anger"::"fear",
-		"fear"::"hope",
-		"sadness"::"joy",
-		"fear"::"anger",
-		"hope"::"fear",
-		"joy"::"sadness"
-	];
 	float felt_negative_emotions;
 	
 	float k_liking <- P_rioter_k_liking; // 1.0
@@ -386,7 +378,6 @@ species rioter parent:boid control:simple_bdi{
    	}
    	   	
    	/// /// Emotional Contagion /// ///   	
-   	bool inter_emotional_contagion <- false;
    	/* run the full process of emotional contagion manually for rioters */
    	action process_emotional_contagion{
    		if focus = self {write " -- process_emotional_contagion -- ";}
@@ -616,10 +607,36 @@ species rioter parent:boid control:simple_bdi{
    		}
    	}    
    	
+   	bool has_fear;
+   	bool has_fear_confirmed; 
+   	bool has_sadness;
+   	bool has_anger;
+   	bool has_joy;
+   	float fear_rate <- 0.05;
    	/* set the intensity decay of all emotions */
    	action set_emotion_decay {
+   		has_fear_confirmed <- false;
+   		has_fear <- false;
+   		has_sadness <- false;
+   		has_anger <-false;
+   		has_joy <- false;
    		loop single_emotion over: emotion_base{
    			single_emotion <- new_emotion(single_emotion.name, single_emotion.intensity, single_emotion.about, P_emotion_decay);//set_decay(single_emotion,P_emotion_decay);
+   			if single_emotion.name = "fear" and single_emotion.intensity > fear_rate{
+   				has_fear <- true;
+   			}
+   			if single_emotion.name = "fear_confirmed" and single_emotion.intensity > fear_rate{
+   				has_fear_confirmed <- true;
+   			}
+   			if single_emotion.name = "anger" and single_emotion.intensity > fear_rate{
+   				has_anger <- true;
+   			}
+   			if single_emotion.name = "joy" and single_emotion.intensity > fear_rate{
+   				has_joy <- true;
+   			}
+   			if single_emotion.name = "sadness" and single_emotion.intensity > fear_rate{
+   				has_sadness <- true;
+   			}
    		} 
    	}
     

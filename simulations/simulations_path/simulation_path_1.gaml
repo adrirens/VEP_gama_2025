@@ -49,7 +49,24 @@ global {
 			    "surrounded"::["fear"]
 			    //"any_police_officer_around"::[]
 			    //"order_to_scatter_signal"::["fear"]
+			],
+			"calm"::[
+			    "spatial_incursion"::["anger"],
+			    "outnumbered"::["fear"],
+			    //"unjust_arrest_around"::["anger"],
+			    "surrounded"::["fear"]
+			    //"any_police_officer_around"::[]
+			    //"order_to_scatter_signal"::["fear"]
+			],
+			"alert"::[
+			    "spatial_incursion"::["anger"],
+			    "outnumbered"::["fear"],
+			    //"unjust_arrest_around"::["anger"],
+			    "surrounded"::["fear"]
+			    //"any_police_officer_around"::[]
+			    //"order_to_scatter_signal"::["fear"]
 			]
+			
 		];
 		
 		create path_world_builder returns: world_builders;
